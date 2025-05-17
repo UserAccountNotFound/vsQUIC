@@ -105,9 +105,12 @@ apt install -qy ca-certificates \
 
 progress-bar "Настройка репозитория Docker"
 install -m 0755 -d /etc/apt/keyrings || error_exit "Ошибка создания директории"
-curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg || error_exit "Ошибка загрузк>
+curl -fsSL https://download.docker.com/linux/debian/gpg | \
+        sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg || error_exit "Ошибка загрузки ключа репозитория Docker"
 chmod a+r /etc/apt/keyrings/docker.gpg || error_exit "Ошибка установки прав на добавленый ключь репозитория Docker"
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(. /etc/os->
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+        https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+        sudo tee /etc/apt/sources.list.d/docker.list > /dev/null || error_exit "Ошибка добавления репозитория Docker"
 
 progress-bar "Установка Docker"
 apt update -q >/dev/null || error_exit "Ошибка обновления базы пакетов операционной системы"
