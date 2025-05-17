@@ -1,6 +1,52 @@
 # vsQUIC
 
-## Разбор уязвимости:
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/:packageName)
+
+## Развертывание стенда
+
+ Скачать и сразу выполнить скрипт, что удобно для быстрого запуска
+
+``` bash
+sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/UserAccountNotFound/vsQUIC/main/assets/prj_install.sh)"
+```
+
+ Или альтернативный вариант по шагам, сначала сохраняем скрипт в файл, затем делаем его исполняемым и наконец запускаем
+
+``` bash
+wget -q https://raw.githubusercontent.com/UserAccountNotFound/vsQUIC/main/assets/prj_install.sh -O prj_install.sh
+chmod +x prj_install.sh
+sudo ./prj_install.sh
+```
+
+### Однако, не стоит бездумно запускать все подряд':'
+
+1. Необходимо всегда проверять содержимое скрипта перед запуском (вдруг шпиЕны порезвились)
+2. Запускайте код и команды полученные только из доверенных репозиториев (вдруг это изначально код деструктивного воздействия)
+3. Для проверки можно сначала скачать скрипт и просмотреть его:
+
+```bash
+wget -q https://raw.githubusercontent.com/UserAccountNotFound/vsQUIC/main/assets/prj_install.sh -O- | less
+```
+
+ Пример к пункту 2:
+![Суицидный кубик](assets/img/suicide_cube.jpg)
+Кубик - это инструмент, дающий возможность нарушителю поиграть с судьбой. 
+Кубик выписывается нарушителю админами, когда админы считают это нужным.
+Кубик - это 0 win игра. Лучшее, что вы можете выиграть - это ничего (помилование в случае нарушителя), в худшем - бан.
+
+"Награды" кубика:
+1 - бан
+2-5 - мут на указанное количество дней
+6 - помилование
+
+Обычный юзер может тоже кидать кубик без админского предписания. В таком случае это считается добровольным суицидом (тупостью). 
+Со всеми последствиями, описанными выше.
+
+(c) выписка из правил группы Неофициального русскоязычного сообщества про Flipper от проекта Unleashed Firmware
+
+Сами Правила: <https://t.me/flipperzero_unofficial_ru/37>
+
+## Разбор демонстрируемой уязвимости':'
 
 1. Фиксированный буфер: В коде используется фиксированный буфер meta_buffer размером 256 байт без проверки длины входных данных.
 
@@ -8,16 +54,17 @@
 
 3. QUIC-специфика: В QUIC уязвимости переполнения буфера могут быть особенно опасны из-за мультиплексирования потоков.
 
-## Пример вредоносной нагрузки:
+## Пример вредоносной нагрузки':'
 
 Злоумышленник отправляет запрос с очень длинным метатегом:
 
-'''
+``` html
 GET / HTTP/3
-meta:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA (вобщем больше 256 символов)
-'''
+meta:AAAAAAAAAAAAAAAAAAAAAAAA......AAAAAAAAAAAAAAAAAAA (вобщем больше 256 символов)
+```
 
-Это может привести к:
+ Это может привести к:
+
 1. Переполнению буфера
 2. Возможности выполнения произвольного кода
 3. Краху сервера

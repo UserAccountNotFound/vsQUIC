@@ -1,22 +1,44 @@
-version: "3.4"
 services:
+
   server:
     container_name: vsQUIC
-    image: debian:latest
+    image: python:3.12-slim-bookworm
     labels:
       description: Implementing a WEB server to demonstrate the existing vulnerability QUIC
       name: VulnerableQuicServer
+    restart: unless-stopped
+    command: >
+        bash -c "python3 -m venv /opt/venv &&
+        source /opt/venv/bin/activate &&
+        pip install --upgrade pip &&
+        pip install -r /opt/requirements.txt &&
+        python /opt/quic-srv.py"
     ports:
       - "4433:4433"
     volumes:
-      - ~/vsQUIC/certs:/opt/certs
-#    environment:
-  
+      - /etc/localtime:/etc/localtime:ro                                       # time
+      - /opt/vsQUIC/server/:/opt
+    environment:
+      - TZ=Europe/Moscow                                                       # time zone
+
   client:
     container_name: haCker
-    image: debian:latest
-    label:
+    image: python:3.12-slim-bookworm
+    labels:
       description: Implementing a WEB client to demonstrate the existing vulnerability QUIC
       name: QuicExploitClient
+    restart: unless-stopped
+    command: >
+        bash -c "python3 -m venv /opt/venv &&
+        source /opt/venv/bin/activate &&
+        pip install --upgrade pip &&
+        pip install -r /opt/requirements.txt &&
+        python /opt/quic-client.py"
     ports:
-      - "4433:4433"
+      - "9898:9898"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro                                       # time
+      - /opt/vsQUIC/client/:/opt
+    environment:
+      - TZ=Europe/Moscow                                                       # time zone
+
