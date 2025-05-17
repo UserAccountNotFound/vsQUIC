@@ -22,25 +22,32 @@ install_or_update_pip() {
     fi
 }
 
+# Функция для создания виртуального окружения
+init_venv() {
+    log "Создание виртуального окружения..."
+    if [ ! -d "venv" ]; then
+        python3 -m venv venv
+        log "Виртуальное окружение создано"
+    else
+        log "Виртуальное окружение уже существует"
+    fi
+    
+    log "Активация виртуального окружения"
+    source venv/bin/activate
+}
 
-# Установка или обновление Python 3
-install_or_update_python
 
-# Установка или обновление pip
-install_or_update_pip
+echo "Установка или обновление необходимых пакетов"
+install_or_update_python                             # Установка или обновление python
+install_or_update_pip                                # Установка или обновление pip
 
-# Создаем виртуальное окружение
-echo "Создание виртуального окружения..."
-python3 -m venv venv
-source venv/bin/activate
+echo "Инициализация виртуального окружения..."
+init_venv
 
-# Устанавливаем зависимости из requirements.txt
 echo "Установка зависимостей из requirements.txt..."
 pip3 install -r /opt/requirements.txt
 
-# Запускаем сервер
 echo "Запуск QUIC сервера..."
 python3 /opt/quic-srv.py
 
-# Деактивируем виртуальное окружение
-deactivate
+deactivate                                           # Деактивируем виртуальное окружение
