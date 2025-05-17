@@ -8,12 +8,8 @@ services:
       name: VulnerableQuicServer
     restart: unless-stopped
     command: >
-        bash -c "/opt/startServer.sh"
-#        bash -c "python3 -m venv /opt/venv &&
-#        source /opt/venv/bin/activate &&
-#        pip install --upgrade pip &&
-#        pip install -r /opt/requirements.txt &&
-#        python /opt/quic-srv.py"
+        bash -c "chmod +x /opt/startServer.sh &&
+          /opt/startServer.sh"
     ports:
       - "4433:4433"
     volumes:
@@ -30,12 +26,8 @@ services:
       name: QuicExploitClient
     restart: unless-stopped
     command: >
-        bash -c "/opt/startClient.sh"
-#        bash -c "python3 -m venv /opt/venv &&
-#        source /opt/venv/bin/activate &&
-#        pip install --upgrade pip &&
-#        pip install -r /opt/requirements.txt &&
-#        python /opt/quic-client.py"
+        bash -c "chmod +x /opt/startClient.sh &&
+          /opt/startClient.sh"
     ports:
       - "9898:9898"
     volumes:
