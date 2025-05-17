@@ -1,0 +1,22 @@
+version: "3.4"
+services:
+  server:
+    container_name: vsQUIC
+    image: debian:latest
+    labels:
+      description: Implementing a WEB server to demonstrate the existing vulnerability QUIC
+      name: VulnerableQuicServer
+    ports:
+      - "4433:4433"
+    volumes:
+      - ~/vsQUIC/certs:/opt/certs
+#    environment:
+  
+  client:
+    container_name: haCker
+    image: debian:latest
+    label:
+      description: Implementing a WEB client to demonstrate the existing vulnerability QUIC
+      name: QuicExploitClient
+    ports:
+      - "4433:4433"
