@@ -86,7 +86,7 @@ progress-bar() {
     BAR+="]"
 
     # Выводим в той же строке
-    echo -ne "\r${BLUE}${BAR} ${PERCENT}% ${GREEN}$1${NC}"
+    echo -ne "\r${BLUE}${BAR} ${PERCENT}% ${GREEN}$1${NC}\n"
 
     # Если завершено, перевести строку
     if [ $CURRENT_STEP -eq $TOTAL_STEPS ]; then
