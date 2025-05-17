@@ -22,48 +22,63 @@ BAR_WIDTH=20
 TOTAL_STEPS=10
 CURRENT_STEP=0
 
-# Определение дистрибутива и менеджера пакетов
-detect_package_manager() {
-    if command -v apt >/dev/null 2>&1; then
-        echo "apt"
-    elif command -v yum >/dev/null 2>&1; then
-        echo "yum"
-    elif command -v dnf >/dev/null 2>&1; then
-        echo "dnf"
-    elif command -v zypper >/dev/null 2>&1; then
-        echo "zypper"
-    elif command -v pacman >/dev/null 2>&1; then
-        echo "pacman"
-    else
-        echo "unknown"
+# Функция определения дистрибутива и менеджера пакетов
+detect_distrib() {
+    local linux_distrib=""
+    local version_codename=""
+    local pkg_manager=""
+
+    # Определяем используемый дистрибутив linux и его версию
+    if [ -f /etc/os-release ]; then
+        linux_distrib=$(grep -oP '^ID=\K\w+' /etc/os-release | tr -d '"')
+        version_codename=$(grep -oP 'VERSION_CODENAME=\K\w+' /etc/os-release 2>/dev/null || echo "")
     fi
+
+    # Определяем менеджер пакетов
+    if command -v apt >/dev/null 2>&1; then
+        pkg_manager="apt"
+        [ -z "$version_codename" ] && version_codename="bookworm" # Значение по умолчанию для Debian
+    elif command -v dnf >/dev/null 2>&1; then
+        pkg_manager="dnf"
+    elif command -v yum >/dev/null 2>&1; then
+        pkg_manager="yum"
+    elif command -v zypper >/dev/null 2>&1; then
+        pkg_manager="zypper"
+    elif command -v pacman >/dev/null 2>&1; then
+        pkg_manager="pacman"
+    else
+        pkg_manager="unknown"
+    fi
+
+    echo "$linux_distrib $pkg_manager $version_codename"
 }
 
-PKG_MANAGER=$(detect_package_manager)
+# Получаем информацию о дистрибутиве
+read -r LINUX_DISTRIB PKG_MANAGER VERSION_CODENAME <<<"$(detect_distrib)"
 
 # Функция для установки пакетов
 install_packages() {
     local packages=("$@")
     case $PKG_MANAGER in
-        apt)
-            apt install -y "${packages[@]}" || return 1
-            ;;
-        yum)
-            yum install -y "${packages[@]}" || return 1
-            ;;
-        dnf)
-            dnf install -y "${packages[@]}" || return 1
-            ;;
-        zypper)
-            zypper -n install "${packages[@]}" || return 1
-            ;;
-        pacman)
-            pacman -S --noconfirm "${packages[@]}" || return 1
-            ;;
-        *)
-            echo -e "${RED}Неизвестный менеджер пакетов${NC}"
-            return 1
-            ;;
+    apt)
+        apt install -y "${packages[@]}" || return 1
+        ;;
+    yum)
+        yum install -y "${packages[@]}" || return 1
+        ;;
+    dnf)
+        dnf install -y "${packages[@]}" || return 1
+        ;;
+    zypper)
+        zypper -n install "${packages[@]}" || return 1
+        ;;
+    pacman)
+        pacman -S --noconfirm "${packages[@]}" || return 1
+        ;;
+    *)
+        echo -e "${RED}Неизвестный менеджер пакетов${NC}"
+        return 1
+        ;;
     esac
     return 0
 }
@@ -134,59 +149,54 @@ clean_env() {
 # Установка Docker в зависимости от дистрибутива
 install_docker() {
     case $PKG_MANAGER in
-        apt)
-            # Для Debian/Ubuntu
-            progress-bar "Настройка репозитория Docker"
-            install -m 0755 -d /etc/apt/keyrings || return 1
-            curl -fsSL https://download.docker.com/linux/debian/gpg | \
-                gpg --dearmor -o /etc/apt/keyrings/docker.gpg || return 1
-            chmod a+r /etc/apt/keyrings/docker.gpg || return 1
-            
-            # Определяем код имени версии для репозитория
-            local codename
-            if [ -f /etc/os-release ]; then
-                codename=$(grep -oP 'VERSION_CODENAME=\K\w+' /etc/os-release || echo "bookworm")
-            else
-                codename="bookworm"
-            fi
-            
-            echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
-                https://download.docker.com/linux/debian ${codename} stable" | \
-                tee /etc/apt/sources.list.d/docker.list > /dev/null || return 1
-            
-            apt update -q >/dev/null || return 1
-            ;;
-        yum|dnf)
-            # Для RHEL/CentOS/Fedora
-            yum install -y yum-utils || dnf install -y dnf-plugins-core || return 1
-            yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo || \
-            dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo || return 1
-            ;;
-        zypper)
-            # Для openSUSE
-            zypper addrepo https://download.docker.com/linux/opensuse/docker-ce.repo || return 1
-            ;;
-        pacman)
-            # Для Arch Linux
-            pacman -S --noconfirm docker || return 1
-            systemctl enable --now docker.service || return 1
-            return 0  # Docker уже установлен, выходим
-            ;;
-        *)
-            echo -e "${RED}Неизвестный менеджер пакетов${NC}"
-            return 1
-            ;;
+    apt)
+        # Для Debian/Ubuntu
+        progress-bar "Настройка репозитория Docker"
+        install -m 0755 -d /etc/apt/keyrings || return 1
+        curl -fsSL https://download.docker.com/linux/$LINUX_DISTRIB/gpg |
+            gpg --dearmor -o /etc/apt/keyrings/docker.gpg || return 1
+        chmod a+r /etc/apt/keyrings/docker.gpg || return 1
+
+        # Для Ubuntu используем ubuntu вместо debian в URL
+        local docker_repo_distro=$([ "$LINUX_DISTRIB" = "ubuntu" ] && echo "ubuntu" || echo "debian")
+
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+                https://download.docker.com/linux/$docker_repo_distro $VERSION_CODENAME stable" |
+            tee /etc/apt/sources.list.d/docker.list >/dev/null || return 1
+
+        apt update -q >/dev/null || return 1
+        ;;
+    yum | dnf)
+        # Для RHEL/CentOS/Fedora
+        $PKG_MANAGER install -y yum-utils || $PKG_MANAGER install -y dnf-plugins-core || return 1
+        $PKG_MANAGER config-manager --add-repo \
+            https://download.docker.com/linux/centos/docker-ce.repo || return 1
+        ;;
+    zypper)
+        # Для openSUSE
+        zypper addrepo https://download.docker.com/linux/opensuse/docker-ce.repo || return 1
+        ;;
+    pacman)
+        # Для Arch Linux
+        pacman -S --noconfirm docker || return 1
+        systemctl enable --now docker.service || return 1
+        return 0 # Docker уже установлен, выходим
+        ;;
+    *)
+        echo -e "${RED}Неизвестный менеджер пакетов${NC}"
+        return 1
+        ;;
     esac
 
     progress-bar "Установка Docker"
     local docker_packages=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin)
     install_packages "${docker_packages[@]}" || return 1
-    
+
     # Запускаем Docker
     if ! systemctl is-active --quiet docker; then
         systemctl enable --now docker || return 1
     fi
-    
+
     return 0
 }
 
@@ -196,16 +206,16 @@ echo
 # Установка локалей и настройка времени
 progress-bar "Настройка локалей и времени"
 case $PKG_MANAGER in
-    apt|yum|dnf|zypper)
-        install_packages locales || error_exit "Ошибка установки пакета локалей"
-        ;;
-    pacman)
-        install_packages glibc || error_exit "Ошибка установки glibc"
-        ;;
+apt | yum | dnf | zypper)
+    install_packages locales || error_exit "Ошибка установки пакета локалей"
+    ;;
+pacman)
+    install_packages glibc || error_exit "Ошибка установки glibc"
+    ;;
 esac
 
 timedatectl set-timezone Europe/Moscow || error_exit "Ошибка установки часового пояса"
-sed -i -e 's/# ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen || \
+sed -i -e 's/# ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen ||
     error_exit "Ошибка настройки локали"
 locale-gen ru_RU.UTF-8 || error_exit "Ошибка генерации локали RU.UTF-8"
 update-locale LANG=ru_RU.UTF-8 || error_exit "Ошибка установки локали RU.UTF-8 по умолчанию"
@@ -220,10 +230,10 @@ install_docker || error_exit "Ошибка установки Docker"
 
 progress-bar "Обновление системы"
 case $PKG_MANAGER in
-    apt) apt upgrade -y || error_exit "Ошибка обновления системы" ;;
-    yum|dnf) $PKG_MANAGER update -y || error_exit "Ошибка обновления системы" ;;
-    zypper) zypper -n up || error_exit "Ошибка обновления системы" ;;
-    pacman) pacman -Syu --noconfirm || error_exit "Ошибка обновления системы" ;;
+apt) apt upgrade -y || error_exit "Ошибка обновления системы" ;;
+yum | dnf) $PKG_MANAGER update -y || error_exit "Ошибка обновления системы" ;;
+zypper) zypper -n up || error_exit "Ошибка обновления системы" ;;
+pacman) pacman -Syu --noconfirm || error_exit "Ошибка обновления системы" ;;
 esac
 
 progress-bar "Проверка репозитория vsQUIC"
@@ -247,5 +257,7 @@ docker compose down && docker compose up -d || error_exit "Ошибка запу
 
 # Финальное сообщение
 echo -e "${GREEN}\nУстановка завершена на 100%!${NC}"
+echo -e "${YELLOW}Для перехода в рабочюю папку проекта (стенда) выполните:${NC}"
+echo -e "cd /opt/vsQUIC\n"
 echo -e "${YELLOW}Для просмотра логов контейнеров выполните:${NC}"
 echo -e "docker compose logs -f\n"

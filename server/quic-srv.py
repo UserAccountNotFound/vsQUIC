@@ -11,7 +11,7 @@ class VulnerableQuicServer:
             is_client=False,
             alpn_protocols=H3_ALPN,
         )
-        self.configuration.load_cert_chain("cert-srv.pem", "key-srv.pem")
+        self.configuration.load_cert_chain("/opt/cert/cert-srv.pem", "/opt/cert/key-srv.pem")
         
     async def handle_request(self, stream_id: int, headers: list, data: bytes):
         # Уязвимая обработка заголовков - отсутствие проверки длины
@@ -29,7 +29,7 @@ class VulnerableQuicServer:
         response += b"<html><head>"
         
         # Добавляем метатеги без санитизации
-        # т.е без проверок когда сохраняются только те теги и атрибуты, которые обозначены как «безопасные»
+        # т.е без проверок - когда сохраняются только те теги и атрибуты, которые обозначены как «безопасные»
         for tag in meta_tags:
             response += f"<meta name=\"vuln\" content=\"{tag}\">".encode()
             

