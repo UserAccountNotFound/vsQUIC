@@ -257,5 +257,7 @@ docker compose down && docker compose up -d || error_exit "Ошибка запу
 
 # Финальное сообщение
 echo -e "${GREEN}\nУстановка завершена на 100%!${NC}"
+echo -e "${YELLOW}Для перехода в рабочюю папку проекта (стенда) выполните:${NC}"
+echo -e "cd /opt/vsQUIC\n"
 echo -e "${YELLOW}Для просмотра логов контейнеров выполните:${NC}"
 echo -e "docker compose logs -f\n"
