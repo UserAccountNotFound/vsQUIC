@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # версия запускаемой реализации QUIC-CLIENT_XXXX.py
-VERSION="v2.2"
+VERSION="v2.3"
 
 # маркеры для отслеживания выполненных установок
 INSTALL_SYS_PKG_STATUS="/opt/ENV/.sys_pkg_install_done"
