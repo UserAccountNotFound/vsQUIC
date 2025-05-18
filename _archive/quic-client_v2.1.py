@@ -87,4 +87,4 @@ if __name__ == "__main__":
     print("Цель: vulnerable server QUIC aka 'vsQUIC'")
     
     client = QuicExploitClient("vsQUIC", 4433)
-    asyncio.run(client.run_exploit(threads=100))
+    asyncio.run(client.run_exploit(threads=10))
