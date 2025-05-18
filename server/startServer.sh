@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
+# версия запускаемой реализации QUIC-SERVER_XXXX.py
+VERSION="v1"
+
 # маркеры для отслеживания выполненных установок
-INSTALL_SYS_PKG_STATUS="/opt/.sys_pkg_install_done"
-INSTALL_ENV_PKG_STATUS="/opt/.env_pkg_install_done"
+INSTALL_SYS_PKG_STATUS="/opt/ENV/.sys_pkg_install_done"
+INSTALL_ENV_PKG_STATUS="/opt/ENV/.env_pkg_install_done"
 
 # Функция для проверки и установки Python
 install_or_update_python() {
@@ -63,6 +66,6 @@ if [ ! -f "$INSTALL_ENV_PKG_STATUS" ]; then
 fi
 
 echo "Запуск QUIC сервера..."
-python3 /opt/quic-srv.py
+python3 /opt/quic-srv_"$VERSION".py
 
 deactivate
