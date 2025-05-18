@@ -29,16 +29,18 @@ install_or_update_pip() {
 
 # Функция для создания виртуального окружения
 init_venv() {
+    local venv_path="/opt/venv"
     echo "Проверка виртуального окружения..."
-    if [ ! -d "venv" ]; then
-        python3 -m venv venv
-        echo "Виртуальное окружение создано"
+    
+    if [ ! -d "$venv_path" ]; then
+        python3 -m venv "$venv_path"
+        echo "Виртуальное окружение создано в $venv_path"
     else
-        echo "Виртуальное окружение уже существует"
+        echo "Виртуальное окружение уже существует в $venv_path"
     fi
     
     echo "Активация виртуального окружения"
-    source venv/bin/activate
+    source "$venv_path/bin/activate"
 }
 
 # Проверка, была ли уже выполнена установка системных пакетов
