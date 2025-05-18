@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
 
+# маркеры для отслеживания выполненных установок
+INSTALL_SYS_PKG_STATUS="/opt/.sys_pkg_install_done"
+INSTALL_ENV_PKG_STATUS="/opt/.env_pkg_install_done"
+
 # Функция для проверки и установки Python
 install_or_update_python() {
     if ! command -v python3 &> /dev/null; then
-        echo "Python 3 не найден. Установка Python 3..."
+        echo "Python не найден. Установка Python 3..."
         apt update && apt install -y python3
     else
-        echo "Python 3 уже установлен. Проверка обновлений..."
-        apt-get upgrade -y python3
+        echo "Python уже установлен."
     fi
 }
 
@@ -17,14 +20,13 @@ install_or_update_pip() {
         echo "pip3 не найден. Установка pip..."
         apt install -y python3-pip
     else
-        echo "pip3 уже установлен. Обновление pip..."
-        pip3 install --upgrade pip
+        echo "pip3 уже установлен."
     fi
 }
 
 # Функция для создания виртуального окружения
 init_venv() {
-    echo "Создание виртуального окружения..."
+    echo "Проверка виртуального окружения..."
     if [ ! -d "venv" ]; then
         python3 -m venv venv
         echo "Виртуальное окружение создано"
@@ -36,18 +38,31 @@ init_venv() {
     source venv/bin/activate
 }
 
-
-echo "Установка или обновление необходимых пакетов"
-install_or_update_python                             # Установка или обновление python
-install_or_update_pip                                # Установка или обновление pip
+# Проверка, была ли уже выполнена установка системных пакетов
+if [ ! -f "$INSTALL_SYS_PKG_STATUS" ]; then
+    echo "Установка или обновление необходимых пакетов"
+    install_or_update_python
+    install_or_update_pip
+    
+    # Создаем файл-маркер
+    touch "$INSTALL_SYS_PKG_STATUS"
+    echo "Первоначальная установка завершена"
+fi
 
 echo "Инициализация виртуального окружения..."
 init_venv
 
-echo "Установка зависимостей из requirements.txt..."
-pip3 install -r /opt/requirements.txt
+# Проверка, была ли уже выполнена установка пакетов окружения
+if [ ! -f "$INSTALL_ENV_PKG_STATUS" ]; then
+    echo "Установка зависимостей из requirements.txt..."
+    pip3 install -r /opt/requirements.txt
+    
+    # Создаем файл-маркер
+    touch "$INSTALL_ENV_PKG_STATUS"
+    echo "Первоначальная установка завершена"
+fi
 
 echo "Запуск QUIC сервера..."
 python3 /opt/quic-srv.py
 
-deactivate                                           # Деактивируем виртуальное окружение
+deactivate
