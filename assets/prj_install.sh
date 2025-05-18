@@ -138,12 +138,28 @@ check-update_repo() {
 
 # Проверка и очистка окружения
 clean_env() {
-    local cert_dir="$DESTINATION_DIR/server/cert"
-    if [ -d "$cert_dir" ]; then
-        rm -f "${cert_dir}/key-srv.pem" "${cert_dir}/cert-srv.pem" 2>/dev/null
-    else
-        mkdir -p "$cert_dir" || error_exit "Не удалось создать директорию для сертификатов"
-    fi
+    # Удаление флагов установки пакетов, старых сертификатов
+    local env_dirs=(
+        "${DESTINATION_DIR}/client/ENV"
+        "${DESTINATION_DIR}/server/ENV"
+    )
+
+    # Создаем директории для хранения переменных, если её нет (с проверкой прав)
+    for dir in "${env_dirs[@]}"; do
+        if ! mkdir -p "$dir" 2>/dev/null; then
+            error_exit "Не удалось создать директорию для хранения переменных: $dir"
+        fi
+    done  # Была пропущена эта строка
+
+    # Удаляем хранимые переменные, сертификаты, и т.д., если они существуют
+    for dir in "${env_dirs[@]}"; do
+        if [ -d "$dir" ]; then
+            rm -f "${dir}/.sys_pkg_install_done" \
+                  "${dir}/.env_pkg_install_done" \
+                  "${dir}/.key-srv.pem" \
+                  "${dir}/.cert-srv.pem" 2>/dev/null
+        fi
+    done
 }
 
 # Установка Docker в зависимости от дистрибутива
@@ -245,8 +261,8 @@ clean_env || error_exit "Ошибка при работе с репозитор�
 # Генерация сертификата
 progress-bar "Генерация сертификата"
 openssl req -x509 -newkey rsa:4096 \
-    -keyout "$DESTINATION_DIR/server/cert/key-srv.pem" \
-    -out "$DESTINATION_DIR/server/cert/cert-srv.pem" \
+    -keyout "$DESTINATION_DIR/server/ENV/key-srv.pem" \
+    -out "$DESTINATION_DIR/server/ENV/cert-srv.pem" \
     -days 365 -nodes \
     -subj "/CN=VulnerableQuicServer" >/dev/null 2>&1 || error_exit "Ошибка генерации сертификата"
 

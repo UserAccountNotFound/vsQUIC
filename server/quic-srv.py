@@ -11,7 +11,7 @@ class VulnerableQuicServer:
             is_client=False,
             alpn_protocols=H3_ALPN,
         )
-        self.configuration.load_cert_chain("/opt/cert/cert-srv.pem", "/opt/cert/key-srv.pem")
+        self.configuration.load_cert_chain("/opt/ENV/cert-srv.pem", "/opt/ENV/key-srv.pem")
         
     async def handle_request(self, stream_id: int, headers: list, data: bytes):
         # Уязвимая обработка заголовков - отсутствие проверки длины
