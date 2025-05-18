@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # маркеры для отслеживания выполненных установок
-INSTALL_SYS_PKG_STATUS="/opt/.sys_pkg_install_done"
-INSTALL_ENV_PKG_STATUS="/opt/.env_pkg_install_done"
+INSTALL_SYS_PKG_STATUS="/opt/ENV/.sys_pkg_install_done"
+INSTALL_ENV_PKG_STATUS="/opt/ENV/.env_pkg_install_done"
 
 # Функция для проверки и установки Python
 install_or_update_python() {
