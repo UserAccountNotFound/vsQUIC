@@ -121,6 +121,7 @@ check-update_repo() {
         echo -e "${YELLOW}Обнаружен существующий репозиторий vsQUIC. Обновляю...${NC}"
         cd "$DESTINATION_DIR" || return 1
         git checkout "$REPO_BRANCH" || return 1
+        git stash || return 1  # Сохраняем локальные изменения
         git pull origin "$REPO_BRANCH" || return 1
         cd - >/dev/null || return 1
     else
@@ -149,7 +150,7 @@ clean_env() {
         if ! mkdir -p "$dir" 2>/dev/null; then
             error_exit "Не удалось создать директорию для хранения переменных: $dir"
         fi
-    done  # Была пропущена эта строка
+    done
 
     # Удаляем хранимые переменные, сертификаты, и т.д., если они существуют
     for dir in "${env_dirs[@]}"; do
@@ -260,10 +261,10 @@ pacman) pacman -Syu --noconfirm || error_exit "Ошибка обновления
 esac
 
 progress-bar "Проверка репозитория vsQUIC"
-check-update_repo || error_exit "Ошибка при работе с репозиторием vsQUIC"
+check-update_repo || error_exit "Ошибка при обновлении репозитория vsQUIC"
 
 progress-bar "Очистка устаревшего окружения"
-clean_env || error_exit "Ошибка при работе с репозиторием vsQUIC"
+clean_env || error_exit "Ошибка при очистке окружения"
 
 # Генерация сертификата
 progress-bar "Генерация сертификата"
@@ -280,7 +281,7 @@ docker compose down && docker compose up -d || error_exit "Ошибка запу
 
 # Финальное сообщение
 echo -e "${GREEN}\nУстановка завершена на 100%!${NC}"
-echo -e "${YELLOW}Для перехода в рабочюю папку проекта (стенда) выполните:${NC}"
+echo -e "${YELLOW}Для перехода в рабочую папку проекта (стенда) выполните:${NC}"
 echo -e "cd /opt/vsQUIC\n"
 echo -e "${YELLOW}Для просмотра логов контейнеров выполните:${NC}"
 echo -e "docker compose logs -f\n"
