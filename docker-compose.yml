@@ -1,5 +1,4 @@
 services:
-
   server:
     container_name: vsQUIC
     image: python:3.12-slim-bookworm
@@ -17,6 +16,9 @@ services:
       - /opt/vsQUIC/server/:/opt
     environment:
       - TZ=Europe/Moscow                                                       # time zone
+    networks:
+      interaction_network:
+        ipv4_address: 172.16.238.10
 
   client:
     container_name: haCker
@@ -35,4 +37,14 @@ services:
       - /opt/vsQUIC/client/:/opt
     environment:
       - TZ=Europe/Moscow                                                       # time zone
+    networks:
+      interaction_network:
+        ipv4_address: 172.16.238.20
 
+networks:
+  interaction_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.238.0/24
+          gateway: 172.16.238.1
