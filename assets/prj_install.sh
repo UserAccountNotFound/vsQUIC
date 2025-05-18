@@ -61,7 +61,7 @@ install_packages() {
     local packages=("$@")
     case $PKG_MANAGER in
     apt)
-        apt install -y "${packages[@]}" || return 1
+        DEBIAN_FRONTEND=noninteractive apt-get -qq install -y "${packages[@]}" || return 1
         ;;
     yum)
         yum install -y "${packages[@]}" || return 1
@@ -126,7 +126,7 @@ check-update_repo() {
     else
         # Если папка существует, но это не git репозиторий
         if [ -d "$DESTINATION_DIR" ]; then
-            echo -e "${YELLOW}Папка vsQUIC существует, но не является git репозиторием. Удаляю...${NC}"
+            echo -e "${YELLOW}Папка vsQUIC существует, но не является git репозиторием. Удаляем...${NC}"
             rm -rf "$DESTINATION_DIR" || return 1
         fi
         # Клонируем репозиторий
@@ -154,10 +154,17 @@ clean_env() {
     # Удаляем хранимые переменные, сертификаты, и т.д., если они существуют
     for dir in "${env_dirs[@]}"; do
         if [ -d "$dir" ]; then
-            rm -f "${dir}/.sys_pkg_install_done" \
-                  "${dir}/.env_pkg_install_done" \
-                  "${dir}/.key-srv.pem" \
-                  "${dir}/.cert-srv.pem" 2>/dev/null
+            for file in ".sys_pkg_install_done" \
+                        ".env_pkg_install_done" \
+                        ".key-srv.pem" \
+                        ".cert-srv.pem"; \
+                     do
+                if [ -f "${dir}/$file" ] && [ ! -w "${dir}/$file" ]; then
+                    rm -f "${dir}/$file" || echo -e "${YELLOW}Не удалось удалить ${dir}/$file - недостаточно прав${NC}"
+                elif [ -f "${dir}/$file" ]; then
+                    rm -f "${dir}/$file"
+                fi
+            done
         fi
     done
 }
@@ -180,7 +187,7 @@ install_docker() {
                 https://download.docker.com/linux/$docker_repo_distro $VERSION_CODENAME stable" |
             tee /etc/apt/sources.list.d/docker.list >/dev/null || return 1
 
-        apt update -q >/dev/null || return 1
+        apt-get update -qq >/dev/null || return 1
         ;;
     yum | dnf)
         # Для RHEL/CentOS/Fedora
@@ -246,7 +253,7 @@ install_docker || error_exit "Ошибка установки Docker"
 
 progress-bar "Обновление системы"
 case $PKG_MANAGER in
-apt) apt upgrade -y || error_exit "Ошибка обновления системы" ;;
+apt) DEBIAN_FRONTEND=noninteractive apt-get -qq -y upgrade >/dev/null || error_exit "Ошибка обновления системы" ;;
 yum | dnf) $PKG_MANAGER update -y || error_exit "Ошибка обновления системы" ;;
 zypper) zypper -n up || error_exit "Ошибка обновления системы" ;;
 pacman) pacman -Syu --noconfirm || error_exit "Ошибка обновления системы" ;;
