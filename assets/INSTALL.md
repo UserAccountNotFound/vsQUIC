@@ -35,7 +35,7 @@ cd ./vsQUIC
 Самоподписанный сертификат и ключ:
 
 ``` bash
-openssl req -x509 -newkey rsa:4096 -keyout /opt/vsQUIC/server/cert/key-srv.pem -out /opt/vsQUIC/server/cert/cert-srv.pem -days 365 -nodes >
+openssl req -x509 -newkey rsa:4096 -keyout /opt/vsQUIC/server/ENV/key-srv.pem -out /opt/vsQUIC/server/ENV/cert-srv.pem -days 365 -nodes >
 ```
 
 Управление контейнерами докера
