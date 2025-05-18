@@ -13,7 +13,7 @@ NC='\033[0m' # No Color
 
 # Настройки репозитория
 REPO_URL="https://github.com/UserAccountNotFound/vsQUIC.git"
-REPO_BRANCH="dev"  # Указываем нужную ветку репозитория
+REPO_BRANCH="main"  # Указываем нужную ветку репозитория
 DESTINATION_DIR="/opt/vsQUIC"
 
 # Размер прогресс-бара (в символах)
