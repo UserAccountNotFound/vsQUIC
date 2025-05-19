@@ -105,5 +105,5 @@ if __name__ == "__main__":
     print("Implementation QUIC Exploit Client - Отправка вредоносной нагрузки")
     print("Цель: vulnerable server QUIC aka 'vsQUIC'")
     
-    client = QuicExploitClient("172.16.239.10", 4433)
-    asyncio.run(client.run_exploit(threads=1))  # тестируем 1 запрос
+    client = QuicExploitClient("172.16.239.20", 9898)
+    asyncio.run(client.run_exploit(threads=10))
