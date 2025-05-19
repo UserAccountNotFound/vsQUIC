@@ -11,13 +11,13 @@ INSTALL_ENV_PKG_STATUS="/opt/ENV/.env_pkg_install_done"
 install_or_update_base_packages() {
     echo "Обновление базы системных пакетов"
     apt-get -qq update
-    if ! command -V python3 &> /dev/null; then
+    if ! command -v python3 &> /dev/null; then
         echo "Python не найден. Установка Python 3..."
         apt-get -qq install -y python3
-    if ! command -V netstat &> /dev/null; then
+    if ! command -v netstat &> /dev/null; then
         echo "netstat не найден. Установка net-tools..."
         apt-get -qq install -y net-tools
-    if ! command -V pip3 &> /dev/null; then
+    if ! command -v pip3 &> /dev/null; then
         echo "pip3 не найден. Установка pip..."
         apt-get -qq install -y python3-pip    
     else
