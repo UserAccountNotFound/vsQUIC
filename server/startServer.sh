@@ -44,7 +44,7 @@ init_venv() {
 # Проверка, была ли уже выполнена установка системных пакетов
 if [ ! -f "$INSTALL_SYS_PKG_STATUS" ]; then
     echo "Установка или обновление необходимых пакетов"
-    install_or_update_python
+    install_or_update_base_packages
     
     # Создаем файл-маркер
     touch "$INSTALL_SYS_PKG_STATUS"
@@ -65,7 +65,6 @@ if [ ! -f "$INSTALL_ENV_PKG_STATUS" ]; then
     touch "$INSTALL_ENV_PKG_STATUS"
     echo "Первоначальная установка завершена"
 fi
-
 
 echo "Запуск QUIC сервера..."
 python3 /opt/quic-srv_"$VERSION".py
