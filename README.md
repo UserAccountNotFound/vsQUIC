@@ -1,3 +1,5 @@
+![stability-wip](https://img.shields.io/badge/stability-work_in_progress-lightgrey.svg)
+
 # vulnerable server QUIC aka "vsQUIC"
 
 Данный репозиторий предназначен развертывания демонстрационного стенда не предназначенным для эксплуатации уязвимостей
