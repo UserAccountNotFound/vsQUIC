@@ -2,9 +2,9 @@
 
 Данный репозиторий предназначен развертывания демонстрационного стенда не предназначенным для эксплуатации уязвимостей
 
-![Docker](https://img.shields.io/docker/v/:user/:repo/:tag)
+[![made-with-Docker](https://img.shields.io/badge/Made%20with-Docker)](https://www.docker.com/)
 
-![Python Version](https://img.shields.io/pypi/pyversions/:3.12)
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 
 
 ## Развертывание стенда
