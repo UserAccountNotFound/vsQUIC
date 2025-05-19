@@ -13,7 +13,8 @@ install_or_update_python() {
         echo "Python не найден. Установка Python 3..."
         apt update && apt install -y python3
     else
-        echo "Python уже установлен."
+        echo "pip3 уже установлен. Обновление pip..."
+        pip3 install --upgrade pip
     fi
 }
 
