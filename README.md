@@ -2,9 +2,15 @@
 
 Данный репозиторий предназначен развертывания демонстрационного стенда не предназначенным для эксплуатации уязвимостей
 
+![Linux](https://img.shields.io/badge/-Linux-6C6694.svg?logo=linux&style=flat)
+
+![Bash](https://img.shields.io/badge/Shell_Script-121011?style=for-the-badge&logo=gnu-bash&logoColor=white)
+
+![Bash](https://img.shields.io/badge/Shell_Script-121011?style=for-the-badge&logo=gnu-bash&style=flat)
+
 [![made-with-Docker](https://img.shields.io/badge/Made%20with-Docker)](https://www.docker.com/)
 
-[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
+![Python](https://img.shields.io/badge/-Python-F9DC3E.svg?logo=Python&style=flat)
 
 
 ## Развертывание стенда
