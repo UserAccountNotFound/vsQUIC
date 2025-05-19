@@ -1,4 +1,5 @@
-# vsQUIC                                  ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/:3.12)
+<h1 style="text-align:justify;"># vsQUIC  ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/:3.12)</h1>
+# vsQUIC ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/:3.12)
 
 
 ## Развертывание стенда
