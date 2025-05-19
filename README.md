@@ -4,11 +4,7 @@
 
 ![Linux](https://img.shields.io/badge/-Linux-6C6694.svg?logo=linux&style=flat)
 
-![Bash](https://img.shields.io/badge/Shell_Script-121011?style=for-the-badge&logo=gnu-bash&logoColor=white)
-
 ![Bash](https://img.shields.io/badge/Shell_Script-121011?style=for-the-badge&logo=gnu-bash&style=flat)
-
-[![made-with-Docker](https://img.shields.io/badge/Made%20with-Docker)](https://www.docker.com/)
 
 ![Python](https://img.shields.io/badge/-Python-F9DC3E.svg?logo=Python&style=flat)
 
