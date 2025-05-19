@@ -14,9 +14,13 @@ install_or_update_base_packages() {
     if ! command -V python3 &> /dev/null; then
         echo "Python не найден. Установка Python 3..."
         apt-get -qq install -y python3
+    fi
+    
     if ! command -V netstat &> /dev/null; then
         echo "netstat не найден. Установка net-tools..."
         apt-get -qq install -y net-tools
+    fi
+
     if ! command -V pip3 &> /dev/null; then
         echo "pip3 не найден. Установка pip..."
         apt-get -qq install -y python3-pip    

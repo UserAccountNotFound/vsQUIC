@@ -18,7 +18,7 @@ services:
       - TZ=Europe/Moscow                                                       # time zone
     networks:
       interaction_network:
-        ipv4_address: 172.16.238.10
+        ipv4_address: 172.16.239.10
 
   client:
     container_name: haCker
@@ -40,12 +40,12 @@ services:
       - TZ=Europe/Moscow                                                       # time zone
     networks:
       interaction_network:
-        ipv4_address: 172.16.238.20
+        ipv4_address: 172.16.239.20
 
 networks:
   interaction_network:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.16.238.0/24
-          gateway: 172.16.238.1
+        - subnet: 172.16.239.0/24
+          gateway: 172.16.239.1

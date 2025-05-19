@@ -39,9 +39,10 @@ async def run_server():
         alpn_protocols=H3_ALPN,
     )
     
-    # Укажите пути к вашим сертификатам
+    print("проверка наличия сертификатов...")
     configuration.load_cert_chain("/opt/ENV/cert-srv.pem", "/opt/ENV/key-srv.pem")
-    
+    print("Сертификаты загружены")
+
     try:
         server = await serve(
             host="0.0.0.0",
@@ -51,7 +52,7 @@ async def run_server():
             retry=True,
         )
         print("QUIC/HTTP3 сервер запущен на 0.0.0.0:4433")
-        await asyncio.Future()  # run forever
+        await asyncio.Future()  # всегда запущен 
     except Exception as e:
         print(f"Ошибка запуска сервера: {e}")
 
