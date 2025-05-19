@@ -20,7 +20,7 @@ install_or_update_base_packages() {
         echo "netstat не найден. Установка net-tools..."
         apt-get -qq install -y net-tools
     fi
-    
+
     if ! command -V pip3 &> /dev/null; then
         echo "pip3 не найден. Установка pip..."
         apt-get -qq install -y python3-pip    
