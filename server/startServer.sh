@@ -23,7 +23,8 @@ install_or_update_pip() {
         echo "pip3 не найден. Установка pip..."
         apt install -y python3-pip
     else
-        echo "pip3 уже установлен."
+        echo "pip3 уже установлен. Обновление pip..."
+        pip3 install --upgrade pip
     fi
 }
 
