@@ -10,7 +10,7 @@ services:
         bash -c "chmod +x /opt/startServer.sh &&
           /opt/startServer.sh"
     ports:
-      - "4433:4433"
+      - "4433:4433/udp"
     volumes:
       - /etc/localtime:/etc/localtime:ro                                       # time
       - /opt/vsQUIC/server/:/opt
@@ -31,7 +31,8 @@ services:
         bash -c "chmod +x /opt/startClient.sh &&
           /opt/startClient.sh"
     ports:
-      - "9898:9898"
+      - "9898:9898/tcp"
+      - "9898:9898/udp"
     volumes:
       - /etc/localtime:/etc/localtime:ro                                       # time
       - /opt/vsQUIC/client/:/opt

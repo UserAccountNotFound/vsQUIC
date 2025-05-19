@@ -26,7 +26,7 @@ class ExploitClientProtocol(QuicConnectionProtocol):
         self._http.send_headers(
             stream_id=stream_id,
             headers=headers,
-            end_headers=True,
+ #           end_headers=True,
             end_stream=False
         )
         self._http.send_data(
