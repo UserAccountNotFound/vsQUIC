@@ -13,8 +13,7 @@ install_or_update_python() {
         echo "Python не найден. Установка Python 3..."
         apt update && apt install -y python3
     else
-        echo "pip3 уже установлен. Обновление pip..."
-        pip3 install --upgrade pip
+        echo "Python уже установлен..."
     fi
 }
 
@@ -24,7 +23,7 @@ install_or_update_pip() {
         echo "pip3 не найден. Установка pip..."
         apt install -y python3-pip
     else
-        echo "pip3 уже установлен."
+        echo "pip3 уже установлен..."
     fi
 }
 
@@ -60,6 +59,8 @@ init_venv
 
 # Проверка, была ли уже выполнена установка пакетов окружения
 if [ ! -f "$INSTALL_ENV_PKG_STATUS" ]; then
+    echo "Обновление pip..."
+    pip3 install --upgrade pip
     echo "Установка зависимостей из requirements.txt..."
     pip3 install -r /opt/requirements.txt
     
