@@ -51,7 +51,7 @@ async def run_server():
             retry=True,
         )
         print("QUIC/HTTP3 сервер запущен на 0.0.0.0:4433")
-        await asyncio.Future()  # run forever
+        await asyncio.Future()  # всегда запущен 
     except Exception as e:
         print(f"Ошибка запуска сервера: {e}")
 

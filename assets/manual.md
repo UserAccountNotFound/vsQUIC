@@ -57,3 +57,25 @@ docker compose down
 ```bash
 docker compose logs -f
 ```
+
+проверка присвоеных адресов
+
+``` bash
+docker inspect haCker | grep IPAddress
+```
+
+```
+            "SecondaryIPAddresses": null,
+            "IPAddress": "",
+                    "IPAddress": "172.16.239.20",
+```
+
+проверка занятых портов
+
+``` bash
+docker exec vsQUIC netstat -ulnp | grep 4433
+```
+
+```
+udp        0      0 0.0.0.0:4433            0.0.0.0:*                           134/python3 
+```
