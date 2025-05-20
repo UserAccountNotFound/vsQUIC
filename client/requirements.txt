@@ -15,3 +15,5 @@ service-identity==24.2.0
 setuptools==80.7.1 
 typing-extensions==4.13.2 
 zope.interface==7.2
+opentelemetry-api==1.24.0
+opentelemetry-sdk

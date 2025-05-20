@@ -1,4 +1,15 @@
 services:
+
+  subtrace:
+    image: subtrace/server:latest
+    ports:
+      - "8080:8080"  # Веб-интерфейс Subtrace
+      - "4317:4317"  # OTLP (OpenTelemetry)
+    environment:
+      - SUBTRACE_STORAGE_TYPE=memory  # или "file" для постоянного хранения
+    volumes:
+      - /opt/vsQUIC/subtrace:/var/lib/subtrace
+
   server:
     container_name: vsQUIC
     image: python:3.12-slim-bookworm
@@ -16,6 +27,11 @@ services:
       - /opt/vsQUIC/server/:/opt
     environment:
       - TZ=Europe/Moscow                                                       # time zone
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://subtrace:4317
+      - OTEL_SERVICE_NAME=vsquic-server
+      - OTEL_RESOURCE_ATTRIBUTES=deployment.environment=demo
+    depends_on:
+      - subtrace
     networks:
       interaction_network:
         ipv4_address: 172.16.239.10
@@ -38,6 +54,11 @@ services:
       - /opt/vsQUIC/client/:/opt
     environment:
       - TZ=Europe/Moscow                                                       # time zone
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://subtrace:4317
+      - OTEL_SERVICE_NAME=vsquic-server
+      - OTEL_RESOURCE_ATTRIBUTES=deployment.environment=demo
+    depends_on:
+      - subtrace
     networks:
       interaction_network:
         ipv4_address: 172.16.239.20
