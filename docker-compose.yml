@@ -1,7 +1,15 @@
 services:
 
   subtrace:
-    image: subtrace/server:latest
+    build:
+      context: ./
+      dockerfile: alpine.Dockerfile
+    container_name: subtrace
+#    image: subtrace/server:latest
+    labels:
+      description: Wireshark for Docker containers
+      name: SubtraceService
+    restart: unless-stopped    
     ports:
       - "8080:8080"  # Веб-интерфейс Subtrace
       - "4317:4317"  # OTLP (OpenTelemetry)
